@@ -10,6 +10,7 @@ from functions import *
 from parse_config import ConfigParser
 from trainer import Trainer
 from datetime import datetime
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # fix random seeds for reproducibility
 SEED = 123
@@ -34,7 +35,7 @@ def main(config):
     print('Generator:')
     logger.info(model)
     run_id = datetime.now().strftime(r'%m%d_%H%M%S')
-    save_path = 'saved/picture/' + config['arch']['type'] + '/' + run_id
+    save_path = 'saved/' + 'GAN' + '/' + run_id
     # print(config['arch']['type'])
     # summary(model, (1, splitsize, splitsize))
 
@@ -65,8 +66,12 @@ def main(config):
     from torchvision.utils import save_image
     import os
 
-    if not os.path.exists('./dc_img'):
-        os.mkdir('./dc_img')
+    # import os
+    # save_dir =  .{}/dc_img'.format(save_path))
+    # if os.path.exists(save_dir) is False:
+    #     os.makedirs(save_dir)
+    if not os.path.exists('{}/dc_img'.format(save_path)):
+        os.makedirs('{}/dc_img'.format(save_path))
 
     batch_size = 128
     num_epoch = 1000
@@ -290,18 +295,18 @@ def main(config):
         if epoch == 0:
             print('epoch = 0')
             real_images = to_img(real_img.cpu().data)
-            save_image(real_images, '.{}/dc_img/real_images.png'.format(save_path))
+
+            save_image(real_images, '{}/dc_img/real_images.png'.format(save_path))
             lowhd_imgs = to_img(lowhd_img.cpu().data)
-            save_image(lowhd_imgs, '.{}/dc_img/lowhd_img.png'.format(save_path))
+            save_image(lowhd_imgs, '{}/dc_img/lowhd_img.png'.format(save_path))
         if (epoch + 1) % 10 == 0:
             fake_images = to_img(fake_img.cpu().data)
-            save_image(fake_images, '.{}/dc_img/fake_images-{}.png'.format(save_path,epoch + 1))
+            save_image(fake_images, '{}/dc_img/fake_images-{}.png'.format(save_path, epoch + 1))
         if (epoch + 1) % 50 == 0:
-            torch.save(G.state_dict(), './generator{}.pth'.format(epoch + 1))
+            torch.save(G.state_dict(), '{}/generator{}.pth'.format(save_path, epoch + 1))
 
-    torch.save(G.state_dict(), '.{}/generator_final_one.pth'.format(save_path))
-    torch.save(D.state_dict(), '.{}/discriminator.pth'.format(save_path))
-
+    torch.save(G.state_dict(), '{}/generator_final_one.pth'.format(save_path))
+    torch.save(D.state_dict(), '{}/discriminator.pth'.format(save_path))
 
 
 if __name__ == '__main__':
